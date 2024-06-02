@@ -12,6 +12,13 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+LOGIN_REDIRECT_URL = 'home'  # URL to redirect to after login
+LOGIN_URL = 'login'  # URL for the login page
+AUTHENTICATION_BACKENDS = [
+    'studentsapp.backends.EmailBackend',  
+    'django.contrib.auth.backends.ModelBackend'
+]
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
