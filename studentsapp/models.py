@@ -18,11 +18,16 @@ class Course(models.Model):
     instructor = models.CharField(max_length=100)
     capacity = models.IntegerField()
     schedule = models.ForeignKey(CourseSchedule, on_delete=models.CASCADE)
+    def __str__(self) -> str:
+        return self.name
+
 
 class Student(models.Model):
     name = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
     email = models.EmailField()
+    def __str__(self) -> str:
+        return self.name
 
 class StudentReg(models.Model):
     studentID = models.ForeignKey(Student, on_delete=models.CASCADE)
