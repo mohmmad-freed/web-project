@@ -73,13 +73,12 @@ def register_course(request):
 def courseSchedular(request):
     if request.user.is_authenticated:
         logged_in_student = Student.objects.get(user=request.user)
-        student_schedule = logged_in_student.schedules.filter(is_completed=False).values_list(
-            'days', 'start_time', 'end_time', 'room_no', 'course__name', 'course__instructor_name', 'is_completed'
-        )
+        completed_courses = logged_in_student.schedules.filter(is_completed=True)
         context = {
-            'student_schedule': student_schedule
+            'completed_courses': completed_courses
         }
         return render(request, "studentsapp/courseSchedular.html", context)
     else:
         return render(request, "studentsapp/not_authenticated.html")
+
 
