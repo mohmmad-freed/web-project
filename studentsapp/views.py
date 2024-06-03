@@ -27,12 +27,9 @@ def courseAdmin(request):
 
 def courses(request):
     return render(request, "studentsapp/courses.html")
-<<<<<<< HEAD
-=======
 
 def courseSchedular(request):
     return render(request, "studentsapp/courseSchedular.html")
->>>>>>> 71bb4904e745b8802ddf0793b6481aa13ea2d3bc
 
 def coursesstudents(request):
     return render(request, "studentsapp/coursesstudents.html")
@@ -61,7 +58,6 @@ def login_view(request):
     else:
         form = LoginForm()
     return render(request, 'studentsapp/login.html', {'form': form})
-
 def register_course(request):
     if request.method == 'POST':
         form = CourseRegistrationForm(request.POST, user=request.user)
@@ -77,25 +73,12 @@ def register_course(request):
 def courseSchedular(request):
     if request.user.is_authenticated:
         logged_in_student = Student.objects.get(user=request.user)
-<<<<<<< HEAD
         student_schedule = logged_in_student.schedules.all().values_list(
-            'days', 'start_time', 'end_time', 'room_no', 'course__name', 'course__instructor_name', 'is_completed'
+            'days', 'start_time', 'end_time', 'room_no', 'coursename', 'courseinstructor_name', 'is_completed'
         )
-=======
-
-        # Fetch the schedule for the logged-in student
-        student_schedule = logged_in_student.schedules.all().values_list(
-            'days', 'start_time', 'end_time', 'room_no', 'course__name', 'course__instructor_name'
-        )
-
->>>>>>> 71bb4904e745b8802ddf0793b6481aa13ea2d3bc
         context = {
             'student_schedule': student_schedule
         }
         return render(request, "studentsapp/courseSchedular.html", context)
     else:
-<<<<<<< HEAD
-=======
-        # If the user is not authenticated, handle accordingly
->>>>>>> 71bb4904e745b8802ddf0793b6481aa13ea2d3bc
         return render(request, "studentsapp/not_authenticated.html")
