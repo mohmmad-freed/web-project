@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+# Defining the choices for the days
 DAY_CHOICES = (
     ('S,T,T', 'Sunday, Tuesday, Thursday'),
     ('M,W', 'Monday, Wednesday')
@@ -32,7 +33,6 @@ class CourseSchedule(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     room_no = models.CharField(max_length=10)
-    is_completed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.course.name} - {self.days}"
