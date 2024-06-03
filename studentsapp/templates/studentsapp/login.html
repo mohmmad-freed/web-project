@@ -17,23 +17,23 @@
 <body>
     <div class="header text-center">
         <div class="container">
-            <div class="logo">
+            <div class="logo mt-5">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/%D8%B4%D8%B9%D8%A7%D8%B1_%D8%A7%D9%84%D8%AC%D8%A7%D9%85%D8%B9%D8%A9.png" width="200" alt="logo">
             </div>
-            <div class="col-md-5 mt-5">
+            <div class="col-md-5 mt-5 text-center">
                 <form method="post">
                     {% csrf_token %}
-                    <div class="mb-3 mt-2 text-start">
-                        <label for="id_email" class="form-label text-start">Email address</label>
+                    <div class="mb-3 mt-2 text-center">
+                        <label for="id_email" class="form-label col-md-12 text-center">Email address</label>
                         {{ form.email }}
                     </div>
-                    <div class="mb-3 mt-2 text-start">
-                        <label for="id_password" class="form-label text-start">Password</label>
+                    <div class="mb-3 mt-2 text-center">
+                        <label for="id_password" class="form-label col-md-12 text-center">Password</label>
                         {{ form.password }}
                     </div>
                     <button type="submit" class="btn btn-primary mt-5 col-md-4">LogIn</button>
                 </form>
-                <div id="emailHelp" class="form-text text-start">You do not have an account? <a href="{% url 'register' %}" class="text-danger">Register</a></div>
+                <div id="emailHelp" class="form-text text-center">Don't have an account? <a href="{% url 'register' %}" class="text-danger">Register</a></div>
                 {% if form.errors %}
                     <div class="alert alert-danger mt-3">
                         <ul>
