@@ -70,3 +70,20 @@ def register_course(request):
     else:
         form = CourseRegistrationForm(user=request.user)
     return render(request, 'studentsapp/register_course.html', {'form': form})
+
+def courseSchedular(request):
+    # Check if the user is authenticated
+    if request.user.is_authenticated:
+        # Assuming you have a Student model with a OneToOneField to the User model
+        logged_in_student = Student.objects.get(user=request.user)
+
+        # Fetch the schedule for the logged-in student
+        student_schedule = logged_in_student.studentreg_set.all().values_list('courseID__schedule__days', 'courseID__schedule__startTime', 'courseID__schedule__endTime', 'courseID__schedule__roomNo', 'courseID__name', 'courseID__instructor')
+
+        context = {
+            'student_schedule': student_schedule
+        }
+        return render(request, "studentsapp/courseSchedular.html", context)
+    else:
+        # If the user is not authenticated, handle accordingly
+        return render(request, "studentsapp/not_authenticated.html")
