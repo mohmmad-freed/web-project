@@ -1,34 +1,41 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
-
-
-
-class CourseSchedule(models.Model):
-    days = models.CharField(max_length=50)
-    startTime = models.TimeField()
-    endTime = models.TimeField()
-    roomNo = models.CharField(max_length=50)
-
-class Course(models.Model):
-    code = models.CharField(max_length=10, primary_key=True)
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    prerequisites = models.TextField()
-    instructor = models.CharField(max_length=100)
-    capacity = models.IntegerField()
-    schedule = models.ForeignKey(CourseSchedule, on_delete=models.CASCADE)
-    def __str__(self) -> str:
-        return self.name
-
+# Defining the choices for the days
+DAY_CHOICES = (
+    ('S,T,T', 'Sunday, Tuesday, Thursday'),
+    ('M,W', 'Monday, Wednesday')
+)
 
 class Student(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    password = models.CharField(max_length=100)
-    email = models.EmailField()
-    def __str__(self) -> str:
+    email = models.EmailField(unique=True)
+    schedules = models.ManyToManyField('CourseSchedule', related_name='students')
+
+    def __str__(self):
         return self.name
 
-class StudentReg(models.Model):
-    studentID = models.ForeignKey(Student, on_delete=models.CASCADE)
-    courseID = models.ForeignKey(Course, on_delete=models.CASCADE)
+class Course(models.Model):
+    course_code = models.CharField(max_length=10, unique=True)
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    instructor_name = models.CharField(max_length=100)
+    prerequisites = models.ManyToManyField('self', blank=True, symmetrical=False)
+    capacity = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.course_code} - {self.name}"
+
+class CourseSchedule(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    days = models.CharField(max_length=7, choices=DAY_CHOICES)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    room_no = models.CharField(max_length=10)
+
+    def __str__(self):
+        return f"{self.course.name} - {self.days}"
+
+    class Meta:
+        unique_together = ('course', 'days', 'start_time', 'end_time', 'room_no')
