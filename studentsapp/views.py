@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login
 from .forms import LoginForm
 
 # Create your views here.
-def login(request):
+def login_page(request):
     return render(request,"studentsapp/login.html")
 
 def home(request):
