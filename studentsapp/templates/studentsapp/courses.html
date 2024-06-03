@@ -5,13 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Registration System | Courses</title>
+    <title>Course Registration System | Course Schedular</title>
     <!-- bootstrap css -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <!-- css -->
-    <link rel="stylesheet" href={% static "index.css" %}>
-    <link rel="stylesheet" href="courses.css">
-
+    <link rel="stylesheet" href="{% static "index.css" %}">
+    <link rel="stylesheet" href="{% static "courses.css" %}">
 </head>
 
 <body>
@@ -32,123 +31,84 @@
                     </ul>
                 </div>
                 <div class="logout">
-                    <div class="logout">
-                        <select name="" style="background: none;" id="pageSelect">
-                            <option>Farah</option>
-                            <option value="../account">My Account</option>
-                            <option value="../login" class="btn btn-danger">Logout</option>
-                        </select>
-                    </div>
+                    <select name="" style="background: none;" id="pageSelect">
+                        <option>Farah</option>
+                        <option value="../account">My Account</option>
+                        <option value="../login" class="btn btn-danger">Logout</option>
+                    </select>
                 </div>
-
             </div>
         </nav>
-    <div class="p-3 container">
-        <div class="container">
-            <h2 class="my-3 mb-3">Courses</h2>
+        <div class="p-3 container">
+            <div class="container">
+                <h2 class="my-3 mb-3">Courses</h2>
+            </div>
+            <div class="search-container">
+                <input type="text" id="searchInput" onkeyup="searchCourses()" placeholder="Search for courses...">
+            </div>
+
+            <table class="table table-bordered mt-5 text-center border-primary text-capitalize">
+                <thead>
+                    <tr>
+                        <th scope="col">Code</th>
+                        <th scope="col">Course Title</th>
+                        <th scope="col">Schedule</th>
+                        <th scope="col">Course Instructor</th>
+                        <th scope="col">Prerequisites</th>
+                        <th scope="col">Capacity</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course_schedule in available_courses %}
+                    <tr>
+                        <td>{{ course_schedule.course.course_code }}</td>
+                        <td>{{ course_schedule.course.name }}</td>
+                        <td>{{ course_schedule.days }} {{ course_schedule.start_time }} - {{ course_schedule.end_time }}</td>
+                        <td>{{ course_schedule.course.instructor_name }}</td>
+                        <td>
+                            {% for prerequisite in course_schedule.course.prerequisites.all %}
+                                {{ prerequisite.name }}
+                                {% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ course_schedule.course.capacity }}</td>
+                        <td><button class='btn btn-success text-capitalize'>Add to Schedular</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div class="search-container">
-            <input type="text" id="searchInput" onkeyup="searchCourses()" placeholder="Search for courses...">
+
+        <div class="p-3 container">
+            <div class="container">
+                <h2 class="my-3 mb-3">Done Courses</h2>
+            </div>
+            <table class="table table-bordered mt-5 text-center border-primary text-capitalize">
+                <thead>
+                    <tr>
+                        <th scope="col">Code</th>
+                        <th scope="col">Course Title</th>
+                        <th scope="col">Prerequisites</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course_schedule in completed_courses %}
+                    <tr>
+                        <td>{{ course_schedule.course.course_code }}</td>
+                        <td>{{ course_schedule.course.name }}</td>
+                        <td>
+                            {% for prerequisite in course_schedule.course.prerequisites.all %}
+                                {{ prerequisite.name }}
+                                {% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-
-        <table class="table table-bordered mt-5 text-center border-primary text-capitalize">
-            <thead>
-                <tr>
-                    <th scope="col">code</th>
-                    <th scope="col">Course Title</th>
-                    <th scope="col">Schedule</th>
-                    <th scope="col">course instructor</th>
-                    <th scope="col">Pre request</th>
-                    <th scope="col">Capacity</th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Data Structure</td>
-                    <td>10:00AM-10:50AM Sunday C306  </td>
-                    <td>Dia AbuZaina</td>
-                    <td>Computer Programming</td>
-                    <td>40</td>
-                    <td><button class='btn btn-success text-capitalize'>add to schedular</button></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Data Structure</td>
-                    <td>10:00AM-10:50AM Sunday C306  </td>
-                    <td>Dia AbuZaina</td>
-                    <td>Computer Programming</td>
-                    <td>40</td>
-                    <td><button class='btn btn-success text-capitalize'>add to schedular</button></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Data Structure</td>
-                    <td>10:00AM-10:50AM Sunday C306  </td>
-                    <td>Dia AbuZaina</td>
-                    <td>Computer Programming</td>
-                    <td>40</td>
-                    <td><button class='btn btn-success text-capitalize'>add to schedular</button></td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Data Structure</td>
-                    <td>10:00AM-10:50AM Sunday C306  </td>
-                    <td>Dia AbuZaina</td>
-                    <td>Computer Programming</td>
-                    <td>40</td>
-                    <td><button class='btn btn-success text-capitalize'>add to schedular</button></td>
-                </tr>
-
-            </tbody>
-        </table>
-    </div>  
-
-    <div class="p-3 container">
-        <div class="container">
-            <h2 class="my-3 mb-3">Done Courses</h2>
-        </div>
-        <table class="table table-bordered mt-5 text-center border-primary text-capitalize">
-            <thead>
-                <tr>
-                    <th scope="col">code</th>
-                    <th scope="col">Course Title</th>
-                    <th scope="col">Pre request</th>
-
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Data Structure</td>
-                    <td>Computer Programming</td>
-
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Programmin Language</td>
-                    <td>Object orinted Programming</td>
-
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>English 2</td>
-                    <td>English 1</td>
-
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Calculus 1</td>
-                    <td></td>
-
-                </tr>
-
-            </tbody>
-        </table>
-    </div>  
-
- </header>
+    </header>
 
     <script>
         document.getElementById('pageSelect').addEventListener('change', function () {

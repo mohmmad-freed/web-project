@@ -1,15 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from .models import Student, Course, CourseSchedule, StudentRegistration
 from .forms import StudentRegistrationForm, StudentLoginForm, CourseForm, CourseScheduleForm, StudentForm, UserUpdateForm
 from django.contrib.auth.models import User
-from .decorators import student_required, admin_required
 from django.views.decorators.cache import cache_control
-from django.contrib.auth import logout
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def logout_view(request):
@@ -18,7 +16,6 @@ def logout_view(request):
     return redirect('login')
 
 @login_required
-@admin_required
 def course_report(request):
     courses = Course.objects.all()
     report_data = []
@@ -45,7 +42,6 @@ def course_report(request):
     return render(request, 'courses/course_report.html', context)
 
 @login_required
-@student_required
 def delete_course(request, course_code):
     student = get_object_or_404(Student, id=request.session['student_id'])
     course = get_object_or_404(Course, code=course_code)
@@ -60,7 +56,6 @@ def delete_course(request, course_code):
     return redirect('home')
 
 @login_required
-@student_required
 def register_course(request, course_code):
     student = get_object_or_404(Student, id=request.session['student_id'])
     course = get_object_or_404(Course, code=course_code)
@@ -95,7 +90,6 @@ def register_course(request, course_code):
     return redirect('home')
 
 @login_required
-@student_required
 def profile(request):
     if 'student_id' not in request.session:
         messages.error(request, "Session expired or not set. Please log in again.")
@@ -127,7 +121,6 @@ def profile(request):
     return render(request, 'courses/profile.html', context)
 
 @login_required
-@student_required
 def home(request):
     query = request.GET.get('search_query', '')
     courses = Course.objects.filter(
@@ -201,7 +194,6 @@ def register(request):
     return render(request, 'courses/register.html', {'form': form})
 
 @login_required
-@student_required
 def my_courses(request):
     if 'student_id' not in request.session:
         messages.error(request, "Session expired or not set. Please log in again.")
@@ -224,7 +216,6 @@ def my_courses(request):
         return redirect('login')
 
 @login_required
-@admin_required
 def add_course(request):
     if request.method == 'POST':
         form = CourseForm(request.POST)
@@ -236,13 +227,11 @@ def add_course(request):
     return render(request, 'courses/addcourses.html', {'form': form})
 
 @login_required
-@admin_required
 def course_lista(request):
     courses = Course.objects.all()
     return render(request, 'courses/courses_list.html', {'courses': courses})
 
 @login_required
-@admin_required
 def add_schedule(request):
     if request.method == 'POST':
         form = CourseScheduleForm(request.POST)
@@ -254,13 +243,11 @@ def add_schedule(request):
     return render(request, 'courses/addSchedule.html', {'form': form})
 
 @login_required
-@admin_required
 def schedule_list(request):
     schedules = CourseSchedule.objects.all()
     return render(request, 'courses/schedule_list.html', {'schedules': schedules})
 
 @login_required
-@admin_required
 def student_course_list(request):
     students = Student.objects.all()
     if request.method == "POST":
