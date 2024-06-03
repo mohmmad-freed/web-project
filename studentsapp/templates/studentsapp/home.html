@@ -41,6 +41,23 @@
                 </div>
 
             </div>
+        </div>
+        <div class="notification success" id="successNotification">
+            <span class="notification-message">You have successfully registered for the course!</span>
+            <button class="close-btn" onclick="closeNotification('successNotification')">&times;</button>
+        </div>
+    
+        <div class="notification error" id="errorNotification">
+            <span class="notification-message">There was an error registering for the course. Please try again.</span>
+            <button class="close-btn" onclick="closeNotification('errorNotification')">&times;</button>
+        </div>
+    
+        <script>
+            function closeNotification(notificationId) {
+                document.getElementById(notificationId).style.display = 'none';
+            }
+        </script>
+
         </nav>
         <div class="row container d-felx align-items-center justify-content-center mt-5 text-capitalize">
             <img src="https://www.marefa.org/w/images/thumb/2/26/%D8%B4%D8%B9%D8%A7%D8%B1_%D8%A7%D9%84%D8%AC%D8%A7%D9%85%D8%B9%D8%A9.png/800px-%D8%B4%D8%B9%D8%A7%D8%B1_%D8%A7%D9%84%D8%AC%D8%A7%D9%85%D8%B9%D8%A9.png"
