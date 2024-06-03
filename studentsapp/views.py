@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm
+from .forms import LoginForm, CourseRegistrationForm
+from .models import Student, Course, CourseSchedule
 
-# Create your views here.
 def login_page(request):
     return render(request,"studentsapp/login.html")
 
@@ -40,10 +40,8 @@ def homeAdmin(request):
 def register(request):
     return render(request,"studentsapp/register.html")
 
-
 def schedular(request):
     return render(request,"studentsapp/schedular.html")
-
 
 def login_view(request):
     if request.method == 'POST':
@@ -60,3 +58,15 @@ def login_view(request):
     else:
         form = LoginForm()
     return render(request, 'studentsapp/login.html', {'form': form})
+
+def register_course(request):
+    if request.method == 'POST':
+        form = CourseRegistrationForm(request.POST, user=request.user)
+        if form.is_valid():
+            course_schedule = form.cleaned_data['course_schedule']
+            student = Student.objects.get(user=request.user)
+            student.schedules.add(course_schedule)
+            return redirect('courses')
+    else:
+        form = CourseRegistrationForm(user=request.user)
+    return render(request, 'studentsapp/register_course.html', {'form': form})
