@@ -5,43 +5,40 @@ from .forms import LoginForm, CourseRegistrationForm
 from .models import Student, Course, CourseSchedule
 
 def login_page(request):
-    return render(request,"studentsapp/login.html")
+    return render(request, "studentsapp/login.html")
 
 def home(request):
-    return render(request,"studentsapp/home.html")
+    return render(request, "studentsapp/home.html")
 
 def account(request):
-    return render(request,"studentsapp/account.html")
+    return render(request, "studentsapp/account.html")
 
 def accountAdmin(request):
-    return render(request,"studentsapp/accountAdmin.html")
+    return render(request, "studentsapp/accountAdmin.html")
 
 def addCourse(request):
-    return render(request,"studentsapp/addCourse.html")
+    return render(request, "studentsapp/addCourse.html")
 
 def addShedular(request):
-    return render(request,"studentsapp/addShedular.html")
+    return render(request, "studentsapp/addShedular.html")
 
 def courseAdmin(request):
-    return render(request,"studentsapp/courseAdmin.html")
+    return render(request, "studentsapp/courseAdmin.html")
 
 def courses(request):
-    return render(request,"studentsapp/courses.html")
-
-def courseSchedular(request):
-    return render(request,"studentsapp/courseSchedular.html")
+    return render(request, "studentsapp/courses.html")
 
 def coursesstudents(request):
-    return render(request,"studentsapp/coursesstudents.html")
+    return render(request, "studentsapp/coursesstudents.html")
 
 def homeAdmin(request):
-    return render(request,"studentsapp/homeAdmin.html")
+    return render(request, "studentsapp/homeAdmin.html")
 
 def register(request):
-    return render(request,"studentsapp/register.html")
+    return render(request, "studentsapp/register.html")
 
 def schedular(request):
-    return render(request,"studentsapp/schedular.html")
+    return render(request, "studentsapp/schedular.html")
 
 def login_view(request):
     if request.method == 'POST':
@@ -52,7 +49,7 @@ def login_view(request):
             user = authenticate(request, username=email, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home') 
+                return redirect('home')
             else:
                 form.add_error(None, 'Invalid email or password')
     else:
@@ -72,18 +69,14 @@ def register_course(request):
     return render(request, 'studentsapp/register_course.html', {'form': form})
 
 def courseSchedular(request):
-    # Check if the user is authenticated
     if request.user.is_authenticated:
-        # Assuming you have a Student model with a OneToOneField to the User model
         logged_in_student = Student.objects.get(user=request.user)
-
-        # Fetch the schedule for the logged-in student
-        student_schedule = logged_in_student.studentreg_set.all().values_list('courseID__schedule__days', 'courseID__schedule__startTime', 'courseID__schedule__endTime', 'courseID__schedule__roomNo', 'courseID__name', 'courseID__instructor')
-
+        student_schedule = logged_in_student.schedules.all().values_list(
+            'days', 'start_time', 'end_time', 'room_no', 'course__name', 'course__instructor_name', 'is_completed'
+        )
         context = {
             'student_schedule': student_schedule
         }
         return render(request, "studentsapp/courseSchedular.html", context)
     else:
-        # If the user is not authenticated, handle accordingly
         return render(request, "studentsapp/not_authenticated.html")
