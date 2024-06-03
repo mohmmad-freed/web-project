@@ -19,7 +19,7 @@ class CourseRegistrationForm(forms.Form):
         
         # Check if the student has completed all prerequisites
         prerequisites = course.prerequisites.all()
-        completed_courses = student.schedules.filter(course__in=prerequisites)
+        completed_courses = student.completed_courses.filter(id__in=prerequisites)
         if prerequisites.count() != completed_courses.count():
             raise forms.ValidationError("You must complete all prerequisites before registering for this course.")
         
