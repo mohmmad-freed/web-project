@@ -1,43 +1,48 @@
-# models.py
 from django.db import models
 from django.contrib.auth.models import User
 
-# Defining the choices for the days
-DAY_CHOICES = (
-    ('S,T,T', 'Sunday, Tuesday, Thursday'),
-    ('M,W', 'Monday, Wednesday')
-)
-
 class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    schedules = models.ManyToManyField('CourseSchedule', related_name='students')
+    id = models.AutoField(primary_key=True, unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+         
+    def __str__(self):
+        return self.user.username
 
-    def str(self):
-        return self.name
-
-class Course(models.Model):
-    course_code = models.CharField(max_length=10, unique=True)
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    instructor_name = models.CharField(max_length=100)
-    prerequisites = models.ManyToManyField('self', blank=True, symmetrical=False)
-    capacity = models.IntegerField()
-
-    def str(self):
-        return f"{self.course_code} - {self.name}"
 
 class CourseSchedule(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    days = models.CharField(max_length=7, choices=DAY_CHOICES)
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-    room_no = models.CharField(max_length=10)
-    is_completed = models.BooleanField(default=False)
+    DAY_CHOICES = (
+        ('S,T,T', 'Sunday, Tuesday, Thursday'),
+        ('M,W', 'Monday, Wednesday')
+    )
+    
+    days = models.CharField(max_length=50, null=True, choices=DAY_CHOICES)
+    start_time = models.TimeField(null=True)
+    end_time = models.TimeField(null=True)
+    room_no = models.CharField(max_length=10, null=True)
 
-    def str(self):
-        return f"{self.course.name} - {self.days}"
+    def __str__(self):
+        return f"{self.days} ({self.start_time} - {self.end_time})"
 
-    class Meta:
-        unique_together = ('course', 'days', 'start_time', 'end_time', 'room_no')
+class Course(models.Model):
+    code = models.CharField(max_length=90, unique=True, primary_key=True)
+
+
+
+    name = models.CharField(max_length=100, null=True)
+    description = models.TextField(null=True)
+    instructor = models.CharField(max_length=100, null=True)
+    scheduled = models.ForeignKey(CourseSchedule, on_delete=models.CASCADE, related_name='courses')
+    prerequisites = models.ManyToManyField('self', blank=True, symmetrical=False)
+    capacity = models.IntegerField(null=True)
+
+    def __str__(self):
+        return self.name
+
+class StudentRegistration(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True)
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='registrations')
+
+    def __str__(self):
+        student_name = self.student.user.username if self.student and self.student.user else "Unknown student"
+        course_code = self.course.code if self.course else "Unknown course"
+        return f"{student_name} - {course_code}"
