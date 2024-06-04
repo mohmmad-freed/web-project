@@ -1,0 +1,32 @@
+{% extends "courses/main.html" %}
+
+{% block content %}
+<h1>My Courses</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Course Code</th>
+            <th>Course Name</th>
+            <th>Instructor</th>
+            <th>Schedule</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for registration in student_courses %}
+        <tr>
+            <td>{{ registration.course.code }}</td>
+            <td>{{ registration.course.name }}</td>
+            <td>{{ registration.course.instructor }}</td>
+            <td>
+                {% if registration.course.scheduled %}
+                    {{ registration.course.scheduled.days }}: {{ registration.course.scheduled.start_time|date:"g:i A" }} - {{ registration.course.scheduled.end_time|date:"g:i A" }} (Room: {{ registration.course.scheduled.room_no }})
+                {% else %}
+                    No Schedule
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
