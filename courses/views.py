@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from django.views.decorators.cache import cache_control
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+
 
 def courses(request):
     query = request.GET.get('search_query', '')
