@@ -122,6 +122,34 @@
             <p>No courses found.</p>
         {% endif %}
     </div>
+    <div class="p-3 container">
+        <div class="container">
+            <h2 class="my-3 mb-3">Done Courses</h2>
+        </div>
+        <table class="table table-bordered mt-5 text-center border-primary text-capitalize">
+            <thead>
+                <tr>
+                    <th scope="col">Code</th>
+                    <th scope="col">Course Title</th>
+                    <th scope="col">Prerequisites</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course_schedule in completed_courses %}
+                <tr>
+                    <td>{{ course_schedule.course.code }}</td>
+                    <td>{{ course_schedule.course.name }}</td>
+                    <td>
+                        {% for prerequisite in course_schedule.course.prerequisites.all %}
+                            {{ prerequisite.name }}
+                            {% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </header>
     <script>
         document.getElementById('pageSelect').addEventListener('change', function () {

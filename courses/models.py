@@ -41,6 +41,7 @@ class Course(models.Model):
 class StudentRegistration(models.Model):
     student = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True)
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='registrations')
+    completed = models.BooleanField(default=False)  # Add this field
 
     def __str__(self):
         student_name = self.student.user.username if self.student and self.student.user else "Unknown student"

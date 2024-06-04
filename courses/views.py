@@ -11,19 +11,21 @@ from django.views.decorators.cache import cache_control
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 
-@login_required
 def courses(request):
     query = request.GET.get('search_query', '')
     courses = Course.objects.filter(
-        Q(code__icontains=query) | 
-        Q(name__icontains=query) | 
-        Q(instructor__icontains=query)
-    )
+    Q(code__icontains=query) | 
+    Q(name__icontains=query) | 
+    Q(instructor__icontains=query)
+)
+
     student = None
     registered_courses = set()
+    completed_courses = []
     if 'student_id' in request.session:
         student = Student.objects.get(id=request.session['student_id'])
         registered_courses = set(StudentRegistration.objects.filter(student=student).values_list('course__code', flat=True))
+        completed_courses = StudentRegistration.objects.filter(student=student, completed=True)
 
     course_data = []
     for course in courses:
@@ -43,6 +45,7 @@ def courses(request):
         'course_data': course_data,
         'query': query,
         'username': request.user.username,
+        'completed_courses': completed_courses
     }
     return render(request, "courses/courses.html", context)
 
