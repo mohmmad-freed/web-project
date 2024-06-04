@@ -1,0 +1,33 @@
+
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <img src="{% static "images/image.png" %}" alt="" width="30" height="24">
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          
+          <li class="nav-item">
+            <a class="nav-link" href={% url "student_course_list" %}>students</a>
+          </li>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href={% url "schedule_list" %}>schedules</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href={% url "course_list" %}>courses</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href={% url "course_report" %}>report</a>
+          </li>
+        
+          <li class="nav-item">
+            <a class="nav-link" href={% url 'logout' %}>Log Out</a> 
+           <li>
+      </div>
+    </div>
+  </nav>

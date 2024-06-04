@@ -1,0 +1,14 @@
+{% extends "courses/main.html" %}
+
+{% block content %}
+<h1>Register for Course: {{ course.name }}</h1>
+<p>Course Code: {{ course.code }}</p>
+<p>Description: {{ course.description }}</p>
+<p>Instructor: {{ course.instructor }}</p>
+<p>Prerequisites: {{ course.prerequisites }}</p>
+<p>Capacity: {{ course.capacity }}</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+{% endblock %}
