@@ -25,25 +25,25 @@
         <div class="col-md-5 mt-3">
             <form method="POST" action="{% url 'register' %}">
                 {% csrf_token %}
-                <div class="mb-3 mt-2 text-start">
-                    <label for="exampleInputEmail1" class="form-label text-start">Email address</label>
+                <div class="mb-3 mt-2 text-center">
+                    <label for="exampleInputEmail1" class="form-label col-md-12 text-center">Email address</label>
                     {{ form.email }}
                 </div>
-                <div class="mb-3 mt-2 text-start">
-                    <label for="exampleInputusername1" class="form-label text-start">Username</label>
+                <div class="mb-3 mt-2 text-center">
+                    <label for="exampleInputusername1" class="form-label col-md-12 text-center">Username</label>
                     {{ form.username }}
                 </div>
-                <div class="mb-3 mt-2 text-start">
-                    <label for="exampleInputPassword1" class="form-label text-start">Password</label>
+                <div class="mb-3 mt-2 text-center">
+                    <label for="exampleInputPassword1" class="form-label col-md-12 text-center">Password</label>
                     {{ form.password1 }}
                 </div>
-                <div class="mb-3 mt-2 text-start">
-                    <label for="exampleInputPassword2" class="form-label text-start">Confirm Password</label>
+                <div class="mb-3 mt-2 text-center">
+                    <label for="exampleInputPassword2" class="form-label col-md-12 text-center">Confirm Password</label>
                     {{ form.password2 }}
                 </div>
                 <button type="submit" class="btn btn-primary mt-2 col-md-4">Register</button>
             </form>
-            <div id="emailHelp" class="form-text text-start">Have an account? <a href="{% url 'login' %}" class="text-danger">Login</a></div>
+            <div id="emailHelp" class="form-text text-center">Have an account? <a href="{% url 'login' %}" class="text-danger">Login</a></div>
         </div>
     </div>
 </div>
