@@ -174,11 +174,14 @@ def profile(request):
 
 @login_required
 def home(request):
+    notifications = Notification.objects.filter(active=True).order_by('-date_created')
     if not request.user.is_authenticated or request.user.is_superuser:
         raise PermissionDenied
 
     context = {
+        'notifications':notifications,
         'username': request.user.username,
+         
     }
     return render(request, "courses/Student/home.html", context)
 
