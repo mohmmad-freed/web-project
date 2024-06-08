@@ -262,6 +262,21 @@ def add_course(request):
     return render(request, 'courses/Admin/addcourses.html', {'form': form})
 
 @login_required
+def removeeditcourse(request):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('course_list')
+    else:
+        form = CourseForm()
+    return render(request, 'courses/Admin/remove&editcourse.html', {'form': form})
+
+
+@login_required
 def course_lista(request):
     if not request.user.is_superuser:
         raise PermissionDenied
