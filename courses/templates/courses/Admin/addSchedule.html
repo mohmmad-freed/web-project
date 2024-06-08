@@ -3,11 +3,11 @@
 {% load static %}
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 {% block content %}
-    <h1>Add New Schedule</h1>
+    <h2 style="margin-top: 20px; margin-left: 10px;">Add New Schedule</h2>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Add Schedule</button>
+        <button type="submit" class="btn btn-primary" style="margin-bottom: 20px; margin-left: 10px;">Add Schedule</button>
     </form>
-    <a href="{% url 'schedule_list' %}">Back to Schedule List</a>
+    <a href="{% url 'schedule_list' %}" style= " margin-left: 10px;">Back to Schedule List</a>
     {% endblock content %}

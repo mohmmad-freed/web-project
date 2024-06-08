@@ -182,6 +182,17 @@ def home(request):
     }
     return render(request, "courses/Student/home.html", context)
 
+@login_required
+def homeAdmin(request):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
+    context = {
+        'username': request.user.username,
+    }
+    return render(request, "courses/Admin/homeAdmin.html", context)
+
+
 def login_view(request):
     if request.method == 'POST':
         form = StudentLoginForm(request.POST)
