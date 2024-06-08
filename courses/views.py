@@ -4,7 +4,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
-from .models import Student, Course, CourseSchedule, StudentRegistration
+from .models import Notification, Student, Course, CourseSchedule, StudentRegistration
 from .forms import StudentRegistrationForm, StudentLoginForm, CourseForm, CourseScheduleForm, StudentForm, UserUpdateForm
 from django.contrib.auth.models import User
 from django.views.decorators.cache import cache_control
@@ -300,3 +300,7 @@ def student_course_list(request):
         form = StudentForm()
 
     return render(request, 'courses/student_course_list.html', {'students': students, 'form': form})
+
+def main(request):
+    notifications = Notification.objects.filter(active=True).order_by('-date_created')
+    return render(request, 'main.html', {'notifications':notifications})

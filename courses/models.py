@@ -47,3 +47,12 @@ class StudentRegistration(models.Model):
         student_name = self.student.user.username if self.student and self.student.user else "Unknown student"
         course_code = self.course.code if self.course else "Unknown course"
         return f"{student_name} - {course_code}"
+    
+class Notification(models.Model):
+    message = models.CharField(max_length=255)
+    date_created = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
+    deadline_date = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Notification created on {self.date_created.strftime('%Y-%m-%d')} - Active: {self.active}"

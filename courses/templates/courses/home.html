@@ -118,7 +118,7 @@
                         <option value="{% url 'logout' %}" class="btn btn-danger">Logout</option>
                     </select>
                 </div>
-            </div>
+            {% comment %} </div>
             <div class="notification success" id="successNotification">
                 <span class="notification-message">Registration for the Summer Semester of 2023/2024 is open now</span>
                 <button class="close-btn" onclick="closeNotification('successNotification')">&times;</button>
@@ -128,8 +128,17 @@
                 function closeNotification(notificationId) {
                     document.getElementById(notificationId).style.display = 'none';
                 }
-            </script>
+            </script> {% endcomment %}
+
         </nav>
+        {% for notification in notifications %}
+        <div class="alert alert-info" role="alert">
+            {{ notification.message }}
+            {% if notification.deadline_date %}
+            {% endif %}
+        </div>
+        {% endfor %}
+    
         
         <div class="row container d-flex align-items-center justify-content-center mt-5 text-capitalize">
             <img src="https://www.marefa.org/w/images/thumb/2/26/شعار_الجامعة.png/800px-شعار_الجامعة.png"
