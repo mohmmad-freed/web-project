@@ -28,7 +28,7 @@
                 <div class="logout">
                     <div class="logout">
                         <select name="" style="background: none;" id="pageSelect">
-                            <option>{{ request.user.name }}</option>
+                            <option>{{ request.user.username }}</option>
                             <option value="../account">My Account</option>
                             <option value="../ " class="btn btn-danger">Logout</option>
                         </select>
@@ -50,7 +50,7 @@
                             <form>
                                 <div class="form-group mb-4 border p-3">
                                     <h5 class="text-primary">Name : </h5>
-                                    <h4 class="form-control-static ml-2 mt-3">{{ request.user.name }}</h4>
+                                    <h4 class="form-control-static ml-2 mt-3">{{ request.user.username }}</h4>
                                 </div>
                                 <div class="form-group mb-4 border p-3">
                                     <h5 class="text-primary">Email Address : </h5>
