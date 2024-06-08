@@ -49,7 +49,7 @@ def courses(request):
         'username': request.user.username,
         'completed_courses': completed_courses
     }
-    return render(request, "courses/courses.html", context)
+    return render(request, "courses/Student/courses.html", context)
 
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -85,7 +85,7 @@ def course_report(request):
         'most_popular_course': most_popular_course,
         'least_popular_course': least_popular_course
     }
-    return render(request, 'courses/course_report.html', context)
+    return render(request, 'courses/Admin/course_report.html', context)
 
 @login_required
 def delete_course(request, course_code):
@@ -170,7 +170,7 @@ def profile(request):
         'student': student,
         'form': form
     }
-    return render(request, 'courses/profile.html', context)
+    return render(request, 'courses/Student/profile.html', context)
 
 @login_required
 def home(request):
@@ -180,7 +180,18 @@ def home(request):
     context = {
         'username': request.user.username,
     }
-    return render(request, "courses/home.html", context)
+    return render(request, "courses/Student/home.html", context)
+
+@login_required
+def homeAdmin(request):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
+    context = {
+        'username': request.user.username,
+    }
+    return render(request, "courses/Admin/homeAdmin.html", context)
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -205,7 +216,7 @@ def login_view(request):
                 form.add_error(None, 'Invalid username or password')
     else:
         form = StudentLoginForm()
-    return render(request, 'courses/login.html', {'form': form})
+    return render(request, 'courses/Student/login.html', {'form': form})
 
 def register(request):
     if request.method == 'POST':
@@ -219,7 +230,7 @@ def register(request):
                 messages.error(request, error)
     else:
         form = StudentRegistrationForm()
-    return render(request, 'courses/register.html', {'form': form})
+    return render(request, 'courses/Student/register.html', {'form': form})
 
 @login_required
 def my_courses(request):
@@ -234,7 +245,7 @@ def my_courses(request):
         'student_courses': student_courses,
         'username': request.user.username,
     }
-    return render(request, "courses/my_courses.html", context)
+    return render(request, "courses/Student/my_courses.html", context)
 
 @login_required
 def add_course(request):
@@ -248,7 +259,22 @@ def add_course(request):
             return redirect('course_list')
     else:
         form = CourseForm()
-    return render(request, 'courses/addcourses.html', {'form': form})
+    return render(request, 'courses/Admin/addcourses.html', {'form': form})
+
+@login_required
+def removeeditcourse(request):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('course_list')
+    else:
+        form = CourseForm()
+    return render(request, 'courses/Admin/remove&editcourse.html', {'form': form})
+
 
 @login_required
 def course_lista(request):
@@ -256,7 +282,7 @@ def course_lista(request):
         raise PermissionDenied
 
     courses = Course.objects.all()
-    return render(request, 'courses/courses_list.html', {'courses': courses})
+    return render(request, 'courses/Admin/courses_list.html', {'courses': courses})
 
 @login_required
 def add_schedule(request):
@@ -270,7 +296,7 @@ def add_schedule(request):
             return redirect('schedule_list')  
     else:
         form = CourseScheduleForm()
-    return render(request, 'courses/addSchedule.html', {'form': form})
+    return render(request, 'courses/Admin/addSchedule.html', {'form': form})
 
 @login_required
 def schedule_list(request):
@@ -278,7 +304,7 @@ def schedule_list(request):
         raise PermissionDenied
 
     schedules = CourseSchedule.objects.all()
-    return render(request, 'courses/schedule_list.html', {'schedules': schedules})
+    return render(request, 'courses/Admin/schedule_list.html', {'schedules': schedules})
 
 @login_required
 def student_course_list(request):
@@ -299,8 +325,8 @@ def student_course_list(request):
     else:
         form = StudentForm()
 
-    return render(request, 'courses/student_course_list.html', {'students': students, 'form': form})
+    return render(request, 'courses/Admin/student_course_list.html', {'students': students, 'form': form})
 
 def main(request):
     notifications = Notification.objects.filter(active=True).order_by('-date_created')
-    return render(request, 'main.html', {'notifications':notifications})
+    return render(request, 'home.html', {'notifications':notifications})

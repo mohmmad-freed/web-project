@@ -131,7 +131,7 @@
             </script> {% endcomment %}
 
         </nav>
-        {% for notification in notifications %}
+        {% for notification in notifications.message %}
         <div class="alert alert-info" role="alert">
             {{ notification.message }}
             {% if notification.deadline_date %}

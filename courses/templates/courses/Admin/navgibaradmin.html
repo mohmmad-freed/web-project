@@ -1,0 +1,30 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+
+  <nav>
+    <div class="nav-content Content">
+        <div class="ul-content">
+            <div class="mb-3">
+                <a href="{% url 'home' %}">
+                    <img src="https://www.marefa.org/w/images/thumb/2/26/شعار_الجامعة.png/800px-شعار_الجامعة.png" width="60px" alt="logo">
+                </a>
+            </div>
+            <ul>
+                <li><a href="{% url 'homeAdmin' %}" style="color: #00008b; text-decoration: none;">Home</a></li>
+                <li><a href="{% url 'student_course_list' %}" style="color: #00008b; text-decoration: none;">Students</a></li>
+                <li><a href="{% url 'course_list' %}" style="color:#00008b;text-decoration: none;">Courses</a></li>
+                <li><a href="{% url 'schedule_list' %}" style="color:#00008b;text-decoration: none;">Scheduler</a></li>
+                <li><a href="{% url 'course_report' %}" style="color: #00008b; text-decoration: none;">Report</a></li>
+
+            </ul>
+        </div>
+        <div class="logout">
+            <select name="" style="background: none;" id="pageSelect" onchange="location = this.value;">
+                <option>{{ username }}</option>
+                <option value="{% url 'profile' %}">My Account</option>
+                <option value="{% url 'logout' %}" class="btn btn-danger">Logout</option>
+            </select>
+        </div>
+    </div>
+</nav>
