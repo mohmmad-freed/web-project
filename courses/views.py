@@ -303,4 +303,4 @@ def student_course_list(request):
 
 def main(request):
     notifications = Notification.objects.filter(active=True).order_by('-date_created')
-    return render(request, 'main.html', {'notifications':notifications})
+    return render(request, 'home.html', {'notifications':notifications})
