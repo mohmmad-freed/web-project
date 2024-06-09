@@ -16,6 +16,27 @@ from django.shortcuts import render
 from django.db.models import Q
 from .models import Course, Student, StudentRegistration
 
+@login_required
+def update_course(request, course_code):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
+    course = get_object_or_404(Course, code=course_code)
+
+    if request.method == 'POST':
+        
+        form = CourseForm(request.POST, instance=course)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Course {course.name} has been updated successfully.")
+            return redirect('course_list')  
+    else:
+        
+        form = CourseForm(instance=course)
+
+    return render(request, 'courses/Admin/update_course.html', {'course': course, 'form': form})
+
+
 def courses(request):
     query = request.GET.get('search_query', '')
     student = None
@@ -96,20 +117,17 @@ def course_report(request):
 
 @login_required
 def delete_course(request, course_code):
-    if 'student_id' not in request.session:
+    if not request.user.is_superuser:
         raise PermissionDenied
 
-    student = get_object_or_404(Student, id=request.session['student_id'])
     course = get_object_or_404(Course, code=course_code)
     
-    registration = StudentRegistration.objects.filter(student=student, course=course).first()
-    if registration:
-        registration.delete()
-        messages.success(request, f"You have successfully unregistered from {course.name}.")
-    else:
-        messages.error(request, "You are not registered for this course.")
     
-    return redirect('courses')
+    course.delete()
+    
+    messages.success(request, f"Course {course.name} has been successfully deleted.")
+    
+    return redirect('course_list')
 
 @login_required
 def register_course(request, course_code):
@@ -281,14 +299,9 @@ def removeeditcourse(request):
     if not request.user.is_superuser:
         raise PermissionDenied
 
-    if request.method == 'POST':
-        form = CourseForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('course_list')
-    else:
-        form = CourseForm()
-    return render(request, 'courses/Admin/remove&editcourse.html', {'form': form})
+    courses = Course.objects.all()  
+
+    return render(request, 'courses/Admin/remove&editcourse.html', {'courses': courses})
 
 
 @login_required
