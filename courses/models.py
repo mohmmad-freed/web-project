@@ -39,7 +39,7 @@ class Course(models.Model):
     scheduled = models.ForeignKey(CourseSchedule, on_delete=models.PROTECT, related_name='courses')
     prerequisites = models.ManyToManyField('self', blank=True, symmetrical=False)
     capacity = models.IntegerField(null=True)
-    students = models.ManyToManyField(Student, related_name='courses')
+    students = models.ManyToManyField(Student, related_name='courses',blank=True)
 
     class Meta:
         indexes = [

@@ -37,8 +37,7 @@
                 </div>
             </div>
         </nav>
-        
-    
+    </header>
 
     <div class="p-3 container">
         <div class="container">
@@ -50,6 +49,9 @@
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
 
+        {% if student %}
+            <p>Welcome, {{ student.user.username }} (ID: {{ student.id }})</p>
+        {% endif %}
 
         {% if messages %}
             <div class="messages">
@@ -119,36 +121,37 @@
             <p>No courses found.</p>
         {% endif %}
     </div>
+
     <div class="p-3 container">
         <div class="container">
-            <!-- to do list -->
-            <h2 class="my-3 mb-3">Done Courses</h2>
+            <h2 class="my-3 mb-3">Completed Courses</h2>
         </div>
         <table class="table table-bordered mt-5 text-center border-primary text-capitalize">
             <thead>
                 <tr>
-                    <th scope="col">Code</th>
-                    <th scope="col">Course Title</th>
-                    <th scope="col">Prerequisites</th>
+                    <th>Code</th>
+                    <th>Course Title</th>
+                    <th>Prerequisites</th>
                 </tr>
             </thead>
             <tbody>
-                {% for course_schedule in completed_courses %}
+                {% for registration in completed_courses %}
                 <tr>
-                    <td>{{ course_schedule.course.code }}</td>
-                    <td>{{ course_schedule.course.name }}</td>
+                    <td>{{ registration.course.code }}</td>
+                    <td>{{ registration.course.name }}</td>
                     <td>
-                        {% for prerequisite in course_schedule.course.prerequisites.all %}
-                            {{ prerequisite.name }}
-                            {% if not forloop.last %}, {% endif %}
-                        {% endfor %}
+                        {% if registration.course.prerequisites.exists %}
+                            {{ registration.course.prerequisites.all|join:", " }}
+                        {% else %}
+                            None
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-</header>
+
     <script>
         document.getElementById('pageSelect').addEventListener('change', function () {
             const selectedPage = this.value;
