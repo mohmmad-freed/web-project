@@ -25,21 +25,63 @@
         <div class="col-md-5 mt-3">
             <form method="POST" action="{% url 'register' %}">
                 {% csrf_token %}
+                
+                <!-- Non-field errors -->
+                {% if form.non_field_errors %}
+                  <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+                
                 <div class="mb-3 mt-2 text-center">
                     <label for="exampleInputEmail1" class="form-label col-md-12 text-center">Email address</label>
                     {{ form.email }}
+                    <!-- Email field errors -->
+                    {% if form.email.errors %}
+                      <div class="text-danger">
+                        {% for error in form.email.errors %}
+                          <p>{{ error }}</p>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
                 </div>
                 <div class="mb-3 mt-2 text-center">
                     <label for="exampleInputusername1" class="form-label col-md-12 text-center">Username</label>
                     {{ form.username }}
+                    <!-- Username field errors -->
+                    {% if form.username.errors %}
+                      <div class="text-danger">
+                        {% for error in form.username.errors %}
+                          <p>{{ error }}</p>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
                 </div>
                 <div class="mb-3 mt-2 text-center">
                     <label for="exampleInputPassword1" class="form-label col-md-12 text-center">Password</label>
                     {{ form.password1 }}
+                    <!-- Password field errors -->
+                    {% if form.password1.errors %}
+                      <div class="text-danger">
+                        {% for error in form.password1.errors %}
+                          <p>{{ error }}</p>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
                 </div>
                 <div class="mb-3 mt-2 text-center">
                     <label for="exampleInputPassword2" class="form-label col-md-12 text-center">Confirm Password</label>
                     {{ form.password2 }}
+                    <!-- Confirm Password field errors -->
+                    {% if form.password2.errors %}
+                      <div class="text-danger">
+                        {% for error in form.password2.errors %}
+                          <p>{{ error }}</p>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
                 </div>
                 <button type="submit" class="btn btn-primary mt-2 col-md-4">Register</button>
             </form>
