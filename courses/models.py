@@ -16,7 +16,14 @@ class Student(models.Model):
 class CourseSchedule(models.Model):
     DAY_CHOICES = (
         ('S,T,T', 'Sunday, Tuesday, Thursday'),
-        ('M,W', 'Monday, Wednesday')
+        ('M,W', 'Monday, Wednesday'),
+        ('S,T', 'Sunday, Tuesday'),
+        ('S,T', 'Sunday, Thursday'),
+        ('S', 'Sunday'),
+        ('M', 'Monday'),
+        ('T', 'Tuesday'),
+        ('w', 'Wednesday'),
+        ('T', 'Thursday'),
     )
     
     days = models.CharField(max_length=50, null=True, choices=DAY_CHOICES)
