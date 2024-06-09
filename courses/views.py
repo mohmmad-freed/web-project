@@ -7,6 +7,7 @@ from django.db.models import Q
 from .models import Notification, Student, Course, CourseSchedule, StudentRegistration
 from .forms import StudentRegistrationForm, StudentLoginForm, CourseForm, CourseScheduleForm, StudentForm, UserUpdateForm
 from django.contrib.auth.models import User
+from .decorators import student_required, admin_required
 from django.views.decorators.cache import cache_control
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -17,6 +18,7 @@ from django.db.models import Q
 from .models import Course, Student, StudentRegistration
 
 @login_required
+@admin_required
 def update_course(request, course_code):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -87,6 +89,7 @@ def logout_view(request):
     return redirect('login')
 
 @login_required
+@admin_required
 def course_report(request):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -116,6 +119,7 @@ def course_report(request):
     return render(request, 'courses/Admin/course_report.html', context)
 
 @login_required
+@admin_required
 def delete_course(request, course_code):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -130,6 +134,7 @@ def delete_course(request, course_code):
     return redirect('course_list')
 
 @login_required
+@student_required
 def register_course(request, course_code):
     if 'student_id' not in request.session:
         raise PermissionDenied
@@ -167,6 +172,7 @@ def register_course(request, course_code):
     return redirect('courses')
 
 @login_required
+@student_required
 def profile(request):
     if 'student_id' not in request.session:
         messages.error(request, "Session expired or not set. Please log in again.")
@@ -198,6 +204,7 @@ def profile(request):
     return render(request, 'courses/Student/profile.html', context)
 
 @login_required
+@student_required
 def home(request):
     notifications = Notification.objects.filter(active=True).order_by('-date_created')
     if not request.user.is_authenticated or request.user.is_superuser:
@@ -211,6 +218,7 @@ def home(request):
     return render(request, "courses/Student/home.html", context)
 
 @login_required
+@admin_required
 def homeAdmin(request):
     if not request.user.is_authenticated:
         raise PermissionDenied
@@ -266,6 +274,7 @@ def register(request):
     return render(request, 'courses/Student/register.html', {'form': form})
 
 @login_required
+@student_required
 def my_courses(request):
     if 'student_id' not in request.session:
         raise PermissionDenied
@@ -281,6 +290,7 @@ def my_courses(request):
     return render(request, "courses/Student/my_courses.html", context)
 
 @login_required
+@admin_required
 def add_course(request):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -295,6 +305,7 @@ def add_course(request):
     return render(request, 'courses/Admin/addcourses.html', {'form': form})
 
 @login_required
+@admin_required
 def removeeditcourse(request):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -305,6 +316,7 @@ def removeeditcourse(request):
 
 
 @login_required
+@admin_required
 def course_lista(request):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -313,6 +325,7 @@ def course_lista(request):
     return render(request, 'courses/Admin/courses_list.html', {'courses': courses})
 
 @login_required
+@admin_required
 def add_schedule(request):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -327,6 +340,7 @@ def add_schedule(request):
     return render(request, 'courses/Admin/addSchedule.html', {'form': form})
 
 @login_required
+@admin_required
 def schedule_list(request):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -335,6 +349,7 @@ def schedule_list(request):
     return render(request, 'courses/Admin/schedule_list.html', {'schedules': schedules})
 
 @login_required
+@admin_required
 def student_course_list(request):
     if not request.user.is_superuser:
         raise PermissionDenied
