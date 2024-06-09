@@ -22,7 +22,7 @@ class CourseUpdateForm(forms.ModelForm):
         model = Course
         fields = ['name', 'description', 'instructor', 'scheduled', 'prerequisites', 'capacity']
         widgets = {
-            'prerequisites': forms.CheckboxSelectMultiple,  # Optional: use checkboxes for multiple selection
+            'prerequisites': forms.CheckboxSelectMultiple,  
         }
 class StudentLoginForm(forms.Form):
     username = forms.CharField(label='Username')

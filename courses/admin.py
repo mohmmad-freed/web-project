@@ -35,7 +35,7 @@ class CourseScheduleAdmin(admin.ModelAdmin):
     list_display = ['days', 'start_time', 'end_time', 'room_no']
     list_filter = ['days']
     search_fields = ['room_no','days']
-# Register your models here.
+# Register models here.
 admin.site.register(Student,StudentAdmin)
 admin.site.register(Course,CourseAdmin)
 admin.site.register(CourseSchedule,CourseScheduleAdmin)
