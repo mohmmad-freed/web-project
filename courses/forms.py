@@ -17,7 +17,13 @@ class StudentRegistrationForm(UserCreationForm):
         if commit:
             user.save()
         return user
-
+class CourseUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = ['name', 'description', 'instructor', 'scheduled', 'prerequisites', 'capacity']
+        widgets = {
+            'prerequisites': forms.CheckboxSelectMultiple,  # Optional: use checkboxes for multiple selection
+        }
 class StudentLoginForm(forms.Form):
     username = forms.CharField(label='Username')
     password = forms.CharField(widget=forms.PasswordInput())
