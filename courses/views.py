@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from .models import Notification, Student, Course, CourseSchedule, StudentRegistration
-from .forms import StudentRegistrationForm, StudentLoginForm, CourseForm, CourseScheduleForm, StudentForm, UserUpdateForm
+from .forms import *
 from django.contrib.auth.models import User
 from .decorators import student_required, admin_required
 from django.views.decorators.cache import cache_control
@@ -24,20 +24,26 @@ def update_course(request, course_code):
         raise PermissionDenied
 
     course = get_object_or_404(Course, code=course_code)
+    schedules = CourseSchedule.objects.all()
+    prerequisites = Course.objects.exclude(code=course_code)  # Exclude current course from prerequisites
 
     if request.method == 'POST':
-        
-        form = CourseForm(request.POST, instance=course)
+        form = CourseUpdateForm(request.POST, instance=course)
         if form.is_valid():
             form.save()
             messages.success(request, f"Course {course.name} has been updated successfully.")
-            return redirect('course_list')  
+            return redirect('course_list')
     else:
-        
-        form = CourseForm(instance=course)
+        form = CourseUpdateForm(instance=course)
 
-    return render(request, 'courses/Admin/update_course.html', {'course': course, 'form': form})
+    context = {
+        'course': course,
+        'form': form,
+        'schedules': schedules,
+        'prerequisites': prerequisites,
+    }
 
+    return render(request, 'courses/Admin/update_course.html', context)
 
 def courses(request):
     query = request.GET.get('search_query', '')

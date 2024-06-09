@@ -6,7 +6,7 @@
     <div class="nav-content Content">
         <div class="ul-content">
             <div class="mb-3">
-                <a href="{% url 'home' %}">
+                <a href="{% url 'homeAdmin' %}">
                     <img src="https://www.marefa.org/w/images/thumb/2/26/شعار_الجامعة.png/800px-شعار_الجامعة.png" width="60px" alt="logo">
                 </a>
             </div>
@@ -21,7 +21,7 @@
         </div>
         <div class="logout">
             <select name="" style="background: none;" id="pageSelect" onchange="location = this.value;">
-                <option>{{ username }}</option>
+                <option>{{ request.user.username }}</option>
                 <option value="{% url 'profile' %}">My Account</option>
                 <option value="{% url 'logout' %}" class="btn btn-danger">Logout</option>
             </select>
