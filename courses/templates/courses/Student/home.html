@@ -82,7 +82,13 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
+<style>
+    .notification-scroller {
+        max-height: 200px; /* Adjust as needed */
+        overflow-y: auto;
+        }
+    
+</style>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -131,13 +137,20 @@
             </script> {% endcomment %}
 
         </nav>
-        {% for notification in notifications%}
-        <div class="alert alert-info" role="alert">
-            {{ notification.message }}
-            {% if notification.deadline_date %}
-            {% endif %}
+        <div class="notification-scroller" >
+            <div class="notification-container">
+                {% for notification in notifications %}
+                    <div class="alert alert-info" role="alert" id="{{ notification.id }}">
+                        {{ notification.message }}
+                        {% if notification.deadline_date %}
+                        <button class="close-btn" onclick="closeNotification('{{ notification.id }}')">&times;</button>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-        {% endfor %}
+                                
+        
     
         
         <div class="row container d-flex align-items-center justify-content-center mt-5 text-capitalize">
@@ -155,6 +168,13 @@
                 window.location.href = selectedPage;
             }
         });
+        function closeNotification(notificationId) {
+            var notificationElement = document.getElementById(notificationId);
+            if (notificationElement) {
+                notificationElement.style.display = "none";
+            }
+        }
+    
     </script>
 </body>
 
