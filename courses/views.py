@@ -119,6 +119,7 @@ def course_report(request):
 
 @login_required
 @admin_required
+
 def delete_course(request, course_code):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -369,6 +370,20 @@ def student_course_list(request):
 
     return render(request, 'courses/Admin/student_course_list.html', {'students': students, 'form': form})
 
-def main(request):
-    notifications = Notification.objects.filter(active=True).order_by('-date_created')
-    return render(request, 'home.html', {'notifications':notifications})
+@login_required
+@student_required
+def unregister_course(request, course_code):
+    if 'student_id' not in request.session:
+        raise PermissionDenied
+
+    student = get_object_or_404(Student, id=request.session['student_id'])
+    course = get_object_or_404(Course, code=course_code)
+
+    registration = StudentRegistration.objects.filter(student=student, course=course).first()
+    if not registration:
+        messages.error(request, "You are not registered for this course.")
+        return redirect('courses')
+
+    registration.delete()
+    messages.success(request, "You have successfully unregistered from the course.")
+    return redirect('courses')

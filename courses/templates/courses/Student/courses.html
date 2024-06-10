@@ -102,10 +102,10 @@
                             <td>{{ data.registered_students_count }} / {{ data.course.capacity }}</td>
                             <td>
                                 {% if data.is_registered %}
-                                    <form method="post" action="{% url 'delete_course' data.course.code %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger">Unregister</button>
-                                    </form>
+                                <form method="post" action="{% url 'unregister_course' data.course.code %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Unregister</button>
+                                </form>
                                 {% else %}
                                     <form method="post" action="{% url 'register_course' data.course.code %}">
                                         {% csrf_token %}
