@@ -38,11 +38,9 @@ class CourseForm(forms.ModelForm):
         self.fields['scheduled'].queryset = self.get_available_schedules()
 
     def get_available_schedules(self):
-        # احصل على جميع الجداول الزمنية
         schedules = CourseSchedule.objects.all()
         available_schedules = CourseSchedule.objects.none()
         for schedule in schedules:
-            # تحقق إذا كان هناك تعارض في الوقت والقاعة
             if not Course.objects.filter(scheduled=schedule).exists():
                 available_schedules |= CourseSchedule.objects.filter(id=schedule.id)
         return available_schedules

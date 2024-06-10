@@ -1,21 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, logout,authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
-from .models import Notification, Student, Course, CourseSchedule, StudentRegistration
+from .models import *
 from .forms import *
 from django.contrib.auth.models import User
 from .decorators import student_required, admin_required
 from django.views.decorators.cache import cache_control
-from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-
-from django.shortcuts import render
-from django.db.models import Q
-from .models import Course, Student, StudentRegistration
 
 @login_required
 @admin_required
@@ -91,7 +84,7 @@ def courses(request):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def logout_view(request):
     logout(request)
-    request.session.flush()  # Clear the session data
+    request.session.flush()
     return redirect('login')
 
 @login_required
