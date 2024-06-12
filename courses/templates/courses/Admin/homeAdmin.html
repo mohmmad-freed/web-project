@@ -20,7 +20,7 @@
                 <div class="ul-content">
                     <div class="mb-3">
                         <a href="{% url 'homeAdmin' %}">
-                            <img src="https://www.marefa.org/w/images/thumb/2/26/شعار_الجامعة.png/800px-شعار_الجامعة.png" width="60px" alt="logo">
+                            <img src="{% static 'imgs/logo.png' %}" width="60px" alt="logo">
                         </a>
                     </div>
                     <ul>
@@ -52,8 +52,7 @@
     
         
         <div class="row container d-flex align-items-center justify-content-center mt-5 text-capitalize">
-            <img src="https://www.marefa.org/w/images/thumb/2/26/شعار_الجامعة.png/800px-شعار_الجامعة.png"
-                class="logo col-md-3 mt-5 m-5" width="50px">
+            <img src="{% static 'imgs/logo.png' %}" width="50px" alt="logo">
             <h1 class="col-md-8 mt-5">Welcome to Admin Registration System Website</h1>
         </div>
     </header>
