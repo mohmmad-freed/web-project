@@ -38,6 +38,22 @@ def update_course(request, course_code):
 
     return render(request, 'courses/Admin/update_course.html', context)
 
+def student_registration(request):
+    if request.method == 'POST':
+        student_id = request.POST.get('student_id')
+        course_code = request.POST.get('course_code')
+        if student_id and course_code:
+            student = Student.objects.get(id=student_id)
+            course = Course.objects.get(code=course_code)
+            StudentRegistration.objects.create(student=student, course=course)
+            messages.success(request, 'Successfully registered for the course')
+        return redirect('student_registration')
+    else:
+        students = Student.objects.all()
+        courses = Course.objects.all()
+    return render(request, 'courses/Admin/student _registration.html')
+
+
 def courses(request):
     query = request.GET.get('search_query', '')
     student = None
