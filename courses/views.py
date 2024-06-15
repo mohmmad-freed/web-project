@@ -38,21 +38,30 @@ def update_course(request, course_code):
 
     return render(request, 'courses/Admin/update_course.html', context)
 
+@login_required
+@admin_required
 def student_registration(request):
     if request.method == 'POST':
-        student_id = request.POST.get('student_id')
-        course_code = request.POST.get('course_code')
-        if student_id and course_code:
-            student = Student.objects.get(id=student_id)
-            course = Course.objects.get(code=course_code)
-            StudentRegistration.objects.create(student=student, course=course)
-            messages.success(request, 'Successfully registered for the course')
+        student_ids = request.POST.getlist('student_id')
+        course_codes = request.POST.getlist('course_code')
+        for student_id in student_ids:
+            student = get_object_or_404(Student, id=student_id)
+            for course_code in course_codes:
+                course = get_object_or_404(Course, code=course_code)
+                try:
+                    StudentRegistration.objects.create(student=student, course=course)
+                    messages.success(request, f"Successfully registered {student.user.username} for course {course.name}")
+                except ValidationError as e:
+                    messages.error(request, str(e))
         return redirect('student_registration')
     else:
         students = Student.objects.all()
         courses = Course.objects.all()
-    return render(request, 'courses/Admin/student _registration.html')
-
+        context = {
+            'students': students,
+            'courses': courses,
+        }
+        return render(request, 'courses/Admin/student_registration.html', context)
 
 def courses(request):
     query = request.GET.get('search_query', '')

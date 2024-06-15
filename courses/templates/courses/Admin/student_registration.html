@@ -1,0 +1,77 @@
+{% extends "courses/Admin/mainadmin.html" %}
+
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>Student Course Registration</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Search Students</h2>
+            <form method="get" action="{% url 'student_course_list' %}">
+                <input type="text" name="search_query" placeholder="Search Student" value="{{ query }}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+
+            <form method="post" action="{% url 'student_registration' %}">
+                {% csrf_token %}
+                <table class="table table-bordered mt-5 text-center border-primary text-capitalize">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Choose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{ student.id }}</td>
+                            <td>{{ student.user.username }}</td>
+                            <td><input type="checkbox" name="student_id" value="{{ student.id }}"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-success">Confirm</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <h2>Search Courses</h2>
+            <form method="get" action="{% url 'course_list' %}">
+                <input type="text" name="search_query" placeholder="Search Course" value="{{ query }}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+
+            <form method="post" action="{% url 'student_registration' %}">
+                {% csrf_token %}
+                <table class="table table-bordered mt-5 text-center border-primary text-capitalize">
+                    <thead>
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Prerequisites</th>
+                            <th>Instructor</th>
+                            <th>Completed</th>
+                            <th>Choose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in courses %}
+                        <tr>
+                            <td>{{ course.code }}</td>
+                            <td>{{ course.name }}</td>
+                            <td>{{ course.prerequisites.all|join:", " }}</td>
+                            <td>{{ course.instructor }}</td>
+                            <td>{{ course.completed }}</td>
+                            <td><input type="checkbox" name="course_code" value="{{ course.code }}"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-success">Confirm</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

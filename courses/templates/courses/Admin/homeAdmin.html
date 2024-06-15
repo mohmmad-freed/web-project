@@ -35,7 +35,6 @@
                 <div class="logout">
                     <select name="" style="background: none;" id="pageSelect" onchange="location = this.value;">
                         <option>{{ username }}</option>
-                        <option value="{% url 'profile' %}">My Account</option>
                         <option value="{% url 'logout' %}" class="btn btn-danger">Logout</option>
                     </select>
                 </div>
