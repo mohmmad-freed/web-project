@@ -9,11 +9,10 @@ from django.contrib.auth.models import User, Group
 from .decorators import *
 from django.views.decorators.cache import cache_control
 from django.core.exceptions import PermissionDenied
-from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
 
-@csrf_exempt
+@allowed_users(allowed_roles=['admin'])
 def save_selected_students(request):
     if request.method == 'POST':
         selected_student_ids = request.POST.getlist('student_ids[]')
