@@ -2,6 +2,7 @@
 
 from django.urls import path
 from . import views
+from .views import save_selected_students
 
 urlpatterns = [
     path('my_courses/', views.my_courses, name="my_courses"),
@@ -24,4 +25,5 @@ urlpatterns = [
     path('remove&editcourse/', views.removeeditcourse, name='removeeditcourse'),
     path('update_course/<str:course_code>/', views.update_course, name='update_course'),
     path('unregister/<str:course_code>/', views.unregister_course, name='unregister_course'),
+    path('save_selected_students/', save_selected_students, name='save_selected_students'),
 ]

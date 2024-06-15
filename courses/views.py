@@ -9,6 +9,32 @@ from django.contrib.auth.models import User
 from .decorators import student_required, admin_required
 from django.views.decorators.cache import cache_control
 from django.core.exceptions import PermissionDenied
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+
+@csrf_exempt
+def save_selected_students(request):
+    if request.method == 'POST':
+        selected_student_ids = request.POST.getlist('student_ids[]')
+        request.session['selected_student_ids'] = selected_student_ids
+
+        
+        courses = Course.objects.filter(students__id__in=selected_student_ids).distinct()
+
+       
+        course_data = []
+        for course in courses:
+            course_data.append({
+                'code': course.code,
+                'name': course.name,
+                'prerequisites': ", ".join([prerequisite.name for prerequisite in course.prerequisites.all()]),
+                'instructor': course.instructor,
+                'completed': course.completed
+            })
+
+        return JsonResponse({'status': 'success', 'courses': course_data})
+    return JsonResponse({'status': 'fail'})
 
 @login_required
 @admin_required
@@ -57,12 +83,17 @@ def student_registration(request):
     else:
         students = Student.objects.all()
         courses = Course.objects.all()
+
+        selected_students = request.session.get('selected_students', [])
+        if selected_students:
+            courses = courses.filter(students__id__in=selected_students).distinct()
+
         context = {
             'students': students,
             'courses': courses,
         }
         return render(request, 'courses/Admin/student_registration.html', context)
-
+    
 def courses(request):
     query = request.GET.get('search_query', '')
     student = None
