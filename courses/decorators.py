@@ -1,34 +1,43 @@
-# decorators.py
 
-from django.contrib.auth.decorators import user_passes_test
-from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse
+from django.shortcuts import redirect
 
-def student_required(function=None):
-    """
-    Decorator for views that checks that the user is a student,
-    redirecting to the login page if necessary.
-    """
-    actual_decorator = user_passes_test(
-        lambda u: u.is_authenticated and not u.is_superuser,
-        login_url='login',
-    )
-    if function:
-        return actual_decorator(function)
-    return actual_decorator
+def student_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if request.user.groups.exists() and request.user.groups.all()[0].name == 'student':
+                return view_func(request, *args, **kwargs)
+            else:
+                return HttpResponse('You are not authorized to view this page')
+        else:
+            return redirect('login')
+    return wrapper
 
-def admin_required(function=None):
-    """
-    Decorator for views that checks that the user is an admin,
-    raising a PermissionDenied exception if necessary.
-    """
-    def check_admin(user):
-        if user.is_authenticated and user.is_superuser:
-            return True
-        raise PermissionDenied
+def allowed_users(allowed_roles=[]):
+    def decorator(view_func):
+        def wrapper_func(request, *args, **kwargs):
+            group = None
+            if request.user.groups.exists():
+                group = request.user.groups.all()[0].name
 
-    actual_decorator = user_passes_test(
-        check_admin
-    )
-    if function:
-        return actual_decorator(function)
-    return actual_decorator
+            if group in allowed_roles:
+                return view_func(request, *args, **kwargs)
+            else:
+                return HttpResponse('You are not authorized to view this page')
+        return wrapper_func
+    return decorator
+
+def admin_only(view_func):
+    def wrapper_function(request, *args, **kwargs):
+        group = None
+        if request.user.groups.exists():
+            group = request.user.groups.all()[0].name
+
+        if group == 'student':
+            return redirect('home')
+
+        if group == 'admin':
+            return view_func(request, *args, **kwargs)
+        else:
+            return HttpResponse('You are not authorized to view this page')
+    return wrapper_function

@@ -1,21 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout,authenticate
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from .models import *
 from .forms import *
-from django.contrib.auth.models import User
-from .decorators import student_required, admin_required
+from django.contrib.auth.models import User, Group
+from .decorators import *
 from django.views.decorators.cache import cache_control
 from django.core.exceptions import PermissionDenied
 
-@login_required
-@admin_required
+@login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def update_course(request, course_code):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-
     course = get_object_or_404(Course, code=course_code)
     schedules = CourseSchedule.objects.all()
     prerequisites = Course.objects.exclude(code=course_code)  # Exclude current course from prerequisites
@@ -38,8 +35,8 @@ def update_course(request, course_code):
 
     return render(request, 'courses/Admin/update_course.html', context)
 
-@login_required
-@admin_required
+@login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def student_registration(request):
     if request.method == 'POST':
         student_ids = request.POST.getlist('student_id')
@@ -63,6 +60,8 @@ def student_registration(request):
         }
         return render(request, 'courses/Admin/student_registration.html', context)
 
+@login_required(login_url="login")
+@student_required
 def courses(request):
     query = request.GET.get('search_query', '')
     student = None
@@ -79,8 +78,7 @@ def courses(request):
 
     courses = Course.objects.filter(
         Q(code__icontains=query) | 
-        Q(name__icontains=query) | 
-        Q(instructor__icontains=query)
+        Q(name__icontains=query)
     ).exclude(code__in=completed_courses_codes)
 
     course_data = []
@@ -105,19 +103,15 @@ def courses(request):
     }
     return render(request, "courses/Student/courses.html", context)
 
-
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def logout_view(request):
     logout(request)
     request.session.flush()
     return redirect('login')
 
-@login_required
-@admin_required
+@login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def course_report(request):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-    
     courses = Course.objects.all()
     report_data = []
 
@@ -142,23 +136,15 @@ def course_report(request):
     }
     return render(request, 'courses/Admin/course_report.html', context)
 
-@login_required
-@admin_required
-
+@login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def delete_course(request, course_code):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-
     course = get_object_or_404(Course, code=course_code)
-    
-    
     course.delete()
-    
     messages.success(request, f"Course {course.name} has been successfully deleted.")
-    
     return redirect('course_list')
 
-@login_required
+@login_required(login_url="login")
 @student_required
 def register_course(request, course_code):
     if 'student_id' not in request.session:
@@ -196,13 +182,9 @@ def register_course(request, course_code):
     messages.success(request, "You have successfully registered for the course.")
     return redirect('courses')
 
-@login_required
+@login_required(login_url="login")
 @student_required
 def profile(request):
-    if 'student_id' not in request.session:
-        messages.error(request, "Session expired or not set. Please log in again.")
-        return redirect('login')
-    
     student = get_object_or_404(Student, id=request.session['student_id'])
     user = student.user
 
@@ -228,31 +210,27 @@ def profile(request):
     }
     return render(request, 'courses/Student/profile.html', context)
 
-@login_required
+@login_required(login_url="login")
 @student_required
 def home(request):
+    if request.user.is_superuser:
+        return redirect('homeAdmin')
+
     notifications = Notification.objects.filter(active=True).order_by('-date_created')
-    if not request.user.is_authenticated or request.user.is_superuser:
-        raise PermissionDenied
 
     context = {
-        'notifications':notifications,
+        'notifications': notifications,
         'username': request.user.username,
-         
     }
     return render(request, "courses/Student/home.html", context)
 
-@login_required
-@admin_required
+@login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def homeAdmin(request):
-    if not request.user.is_authenticated:
-        raise PermissionDenied
-
     context = {
         'username': request.user.username,
     }
     return render(request, "courses/Admin/homeAdmin.html", context)
-
 
 def login_view(request):
     if request.method == 'POST':
@@ -264,7 +242,7 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 if user.is_superuser:
-                    return redirect('student_course_list')
+                    return redirect('homeAdmin')
                 else:
                     try:
                         student = Student.objects.get(user=user)
@@ -283,12 +261,15 @@ def login_view(request):
     storage.used = True
     
     return render(request, 'courses/Student/login.html', {'form': form})
+
 def register(request):
     if request.method == 'POST':
         form = StudentRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
             Student.objects.create(user=user)
+            group = Group.objects.get(name="student")
+            user.groups.add(group)
             messages.success(request, 'Registration successful! You can now log in.')
             return redirect('login')
         else:
@@ -298,7 +279,7 @@ def register(request):
         form = StudentRegistrationForm()
     return render(request, 'courses/Student/register.html', {'form': form})
 
-@login_required
+@login_required(login_url="login")
 @student_required
 def my_courses(request):
     if 'student_id' not in request.session:
@@ -314,12 +295,9 @@ def my_courses(request):
     }
     return render(request, "courses/Student/my_courses.html", context)
 
-@login_required
-@admin_required
+@login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def add_course(request):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-
     if request.method == 'POST':
         form = CourseForm(request.POST)
         if form.is_valid():
@@ -329,32 +307,21 @@ def add_course(request):
         form = CourseForm()
     return render(request, 'courses/Admin/addcourses.html', {'form': form})
 
-@login_required
-@admin_required
+@login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def removeeditcourse(request):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-
-    courses = Course.objects.all()  
-
+    courses = Course.objects.all()
     return render(request, 'courses/Admin/remove&editcourse.html', {'courses': courses})
 
-
-@login_required
-@admin_required
+@login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def course_lista(request):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-
     courses = Course.objects.all()
     return render(request, 'courses/Admin/courses_list.html', {'courses': courses})
 
-@login_required
-@admin_required
+@login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def add_schedule(request):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-
     if request.method == 'POST':
         form = CourseScheduleForm(request.POST)
         if form.is_valid():
@@ -364,21 +331,15 @@ def add_schedule(request):
         form = CourseScheduleForm()
     return render(request, 'courses/Admin/addSchedule.html', {'form': form})
 
-@login_required
-@admin_required
+@login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def schedule_list(request):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-
     schedules = CourseSchedule.objects.all()
     return render(request, 'courses/Admin/schedule_list.html', {'schedules': schedules})
 
-@login_required
-@admin_required
+@login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def student_course_list(request):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-
     students = Student.objects.all()
     if request.method == "POST":
         form = StudentForm(request.POST)
@@ -395,7 +356,7 @@ def student_course_list(request):
 
     return render(request, 'courses/Admin/student_course_list.html', {'students': students, 'form': form})
 
-@login_required
+@login_required(login_url="login")
 @student_required
 def unregister_course(request, course_code):
     if 'student_id' not in request.session:
